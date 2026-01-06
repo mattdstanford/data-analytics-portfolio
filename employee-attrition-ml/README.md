@@ -19,6 +19,11 @@ SHAP dependence plots revealed key insights. These included:
 - An optimal range of 3-5 assigned projects per employee, and to avoid underloading short-tenured employees, specifically
 - To prepare intervention for long-tenured employees who received high last evaluation scores, as well as specifically low-scoring employees who are assigned few projects and high-scoring employees assigned numerous projects.
 ## Power BI Dashboard
+Page 1 of an interactive dashboard, displaying key performance indicators and global feature importances determined via SHAP values.
+![Executive Summary](/employee-attrition-ml/project_page1.png)
+
+Page 2 of an interactive dashboard, displaying behaviors of the four strongest model features, sortable via company department(s).
+![Key Attrition Drivers](/employee-attrition-ml/project_page2.png)
 
 ### Note on Employee Satisfaction
 Model efficacy markedly declined upon omission of employee satisfaction as a predictor. Employee dissatisfaction is very tightly correlated to employee attrition, likely resulting in a situation where a severely dissatisfied employee is determined to leave regardless. Most importantly, however, this metric often suffers from reporting bias due to it being assessed via methods such as voluntary survey. Effort should be taken to improve satisfaction tracking methods within the company, perhaps by increasing assessment frequency and incentivizing high response rates.
