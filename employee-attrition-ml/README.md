@@ -1,18 +1,22 @@
-# Regression Analysis on Customer Tips in NYC Taxi and Limousine Data
-A case study on linear regression applied to NYC Taxi and Limousine Comission data to assess tipping outcomes, with follow-up validation checks to determine measurement bias.
+# Predicting Employee Retention
+A machine learning model to determine factors which contribution to employee attrition, in order to optimize company resources to retain existing employees.
 ## Overview
-This project checked for potential intervention options to improve tipping for taxi and limousine drivers with minimal opportunity cost, while preserving ethical practice. OLS regression was utilized due to tips being quantifiable and continuous. Initial regression analysis suggested that tip averages differed between customers who paid with cash versus with credit card, where credit card payments trended higher. However, follow-up checks to confirm whether tips were correctly tracked for cash-payers and credit card-payers revealed that cash tips are uniformly not tracked, demonstrating substantial measurement bias in modeling outcomes. Thus, results from the predictive model should not be considered valid, and improvements should be made to tip tracking by the NYC TLC.
+This project was based on a request from a vehicle company (Sailfort Motors: fictional company and dataset) to attempt to elucidate factors which contribute to employee attrition, in order to develop interventions targeting employees at risk of leaving. As this was a binary outcome, logistic modeling was most appropriate. Decision tree and random forest models were evaluated to maximize accurate classifications accross sensitivity thresholds. A random forest model was ultimately selected, and SHAP values were used to assess global feature importance, where the strongest predictors in the model were determined. Key predictors included: average number of projects assigned, length of term at the company, average number of monthly hours, and the last evaluation score received. SHAP dependence plots developed for these predictors revealed unique interactions which provide actionable insights for Sailfort.
 ## Key Skills Demonstrated
-- Data cleaning
-- Linear Regression with categorical predictors
-- Multicolinearity assessment with VIF
-- Residual normality and homoscedasticity checks
-- Reconstruction of reported transaction totals to check for hidden tip amounts
-- Determination of measurememt bias
-- Scientific communication of limitations and future suggestions for improvement
+- Data cleaning and transformation
+- Preliminary visualizations to assess important features to include in a predictive model
+- Machine learning models, including decision trees and random forests, training and testing data splits, and model assessment functions in python
+- Use of SHAP values to assess global importance of each model feature and use of dependence plots to reveal unique patterns for each feature and interactions with other features
+- Scientific communication of findings, limitations, and suggest intervention strategies to adress human resources questions
+## Results
+- Initial analysis revealed employee satisfaction to be a strong predictor. However, this was removed from the final model due to it being arguably an outcome variable, as well as something which is not often tracked in an unbiased manner due to being traditionally recorded through survey.
+- The final random forest model maximized roc-auc score and performed well in all other assessment metrics (precision, recall, accuracy, f1).
+- Follow-up analysis of global feature importance using SHAP values revealed number of assigned projects, length of term at company, average monthly hours (coded as over/under-worked at a threshold of 175hrs/month), and last evaluation score.
+- SHAP dependence plots revealed unique, actionable patterns for each of these key features, as well as patterns with their strongest feature interaction.
 ## Summary of Findings
-- Apparent difference in tip amounts between cash and credit card payments are driven by differences in data tracking between both.
-- Cash tips are not directly recorded in the data set, nor do they appear to be hidden within another component of the total transaction amount.
-## Limitations
-- Zero-inflation associated with tip amounts can impact model fitting and interpretation.
-- The model used is entirely based on observational data and cannot make claims about causality.
+SHAP dependence plots revealed key insights. These included:
+
+- An optimal range of 3-5 assigned projects per employee, and to avoid underloading short-tenured employees, specifically
+- To prepare intervention for long-tenured employees who received high last evaluation scores, as well as specifically low-scoring employees who are assigned few projects and high-scoring employees assigned numerous projects.
+### Note on Employee Satisfaction
+Model efficacy markedly declined upon omission of employee satisfaction as a predictor. Employee dissatisfaction is very tightly correlated to employee attrition, likely resulting in a situation where a severely dissatisfied employee is determined to leave regardless. Most importantly, however, this metric often suffers from reporting bias due to it being assessed via methods such as voluntary survey. Effort should be taken to improve satisfaction tracking methods within the company, perhaps by increasing assessment frequency and incentivizing high response rates.
