@@ -2,7 +2,7 @@
 
 This repository contains applied data analysis and modeling projects demonstrating my experience with statistical analysis, data validation, experimental reasoning, and interpretable machine learning. My background combines experimental research with practical data analytics, with emphasis on careful inference, limitations, and communication.
 
-## Projects
+## Main Projects
 
 ### Measurement Bias in NYC Taxi Tip Data
 Developed and assessed linear regression models to elucidate relationships between trip characteristics and reported tip amounts, including categorical predictors. Confirmed a data collection bias by reconstructing total transaction amounts, demonstrating that apparent payment-type dependent effects reflect inconsistent tip tracking, not rider behavior.
