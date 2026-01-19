@@ -10,3 +10,9 @@ This page displays 10 of the top job categories in the data field (left bar char
 ![Job_Specific_Metrics](/analytics_jobs_dashboard/ajd_project_page2.png)
 
 This page features specific metrics for a selected job title from page 1, including the number of jobs with that title in the data set, % of those jobs which mention a formal degree in the posting, % of those jobs which contain direct mention of salary information. Below these cards are a bar chart displaying the 10 most frequently listed skills for that specific job within their respective job postings, and a gauge outputting salary range and median salary for the selected job.
+
+### Tools Used
+- Power BI
+- DAX
+- Drillthrough
+- Tooltips
