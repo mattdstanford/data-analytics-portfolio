@@ -1,1 +1,22 @@
+# Executive Summary
+This project evaluates whether structural team characteristics demonstrate interpretable predictive characteristics for podium outcomes at NCAA Division I Cross Country Championships (2015–2025). Using a longitudinal dataset spanning 240 team observations and ~1,680 athletes (both sexes), I developed predictive models with Leave-One-Year-Out (LOYO) cross-validation to ensure realistic generalization to unseen competition years. The objective was not only to refine an explanatory model, but also to determine the extent of, and interpret, the impacts of model features on its predictions.
+## Key Results
+- Random Forest achieved mean AUC = 0.649, modestly outperforming logistic regression (AUC = 0.60)
+- Removing altitude-related features reduced AUC to 0.549, indicating meaningful predictive contribution
+- SHAP analysis identified altitude exposure and mean team age as consistent contributors
+- Athlete age and nationality distributions shifted significantly following COVID-era eligibility changes
+## Dataset Overview
+Athlete-inclusion was determined via NCAA DI Cross Country competition results, courtesy of TFRRS.org. Demographic characteristics were sourced from worldathletics.org, using their in-built athlete repository search. ChatGPT was utilized to improve data compilation efficiency, and a global ruleset was developed at compilation-onset to ensure consistent formatting and to retain the ability to visually assess data integrity throughout compilation. Ultimately, the top 12 teams across 10 years (2015-2019, 2021-2025; no competitive results from 2020 due to COVID) for both sexes were compiled and delineated via sex. Athlete characteristics included: name, date of birth (if only a year was provided, a date of July 1st, XXXX was assumed), nationality (as listed on worldathletics.org), school class and associated school name at time of competition (school classes [FR, SO, JR, SR], taken from TFRRS.org results).
+## Feature Engineering and Variable Design
+All schools in the data set were compiled and assigned an altitude (metres), based on general internet search of their respective campus' altitudes. Athletes affiliated with those schools in a respective year's data were then assigned that school's altitude. School class was coded as an integer to allow for feature engineering (FR = 1, SO = 2, JR = 3, SR = 4). Based on a hypothesis that altitude exposure would be a meaningful feature in the predictive model, a value called "altitude exposure" was calculated, as a product of campus altitude and "years of exposure" (a conservative variable, designed as "school class - 1 year"), in the units of metre*year. "Years of exposure" was calculated as such, for 2 reasons. 1: Athlete transfer history is not easily sourced and thus athletes in the data set may have had exposure to multiple campuses' altitudes. 2: NCAA XC championships happen in the Fall, historically, which is generally the first academic semester for a new student, thus, they would have had only a handful of months at their new campus' altitude. Nationalities were placed into 4 coarse bins: USA, Europe, East Africa, and Other (any country not directly assigned to one of the three aforementioned bins).
+
+Following completion of an athlete-level data set, a team-aggregated data set was constructed, using Year, Sex, Campus, and Team Placing as unique identifiers. Team proportions of the aforementioned nationality bins, team proportions of school classes, mean athlete-age, athlete-age SD, and altitude exposure characteristics (mean, max, sd) were generated as aggregations and assigned to each team-entry, in addition to team placing, campus altitude, and year.
+
+## Modeling Strategy
+An initial assessment via logistic regression was performed, using LOYO. To explore potential non-linear interactions between variables, random forest models were developed, also using LOYO for cross validation. Model-performance was assessed using ROC-AUC score. Ultimately, following interpretation of SHAP values from an initial RF model (explained below), 2 additional RF models were developed. The 3 models were: all features included, altitude exposure variables removed (but campus altitude retained), and all altitude variables removed. 
+
+Global mean SHAP value plots and SHAP dependence plots for the strongest predictors in the all features model were generated to further assess potential non-linear effects.
+
+## Model Performance
+![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/model_aucs.png)
 
