@@ -51,6 +51,9 @@ A Mann-Whitney test showed a meaningful shift in age distribution from pre-post 
 
 The project prioritizes structural pattern detection rather than causal inference.
 
+### Nationality Variable Framing
+Nationality was included as a structural variable to evaluate representation patterns across championship teams. These groupings reflect commonly used geographic categories in sports analytics and were used solely to assess changes in representation and potential association with team-level outcomes. This analysis does not make causal claims regarding athlete ability or performance. Observed associations likely reflect a complex combination of institutional, developmental, and recruitment factors rather than individual-level determinants. The purpose of including nationality was to examine structural patterns in longitudinal data, not to attribute performance to inherent characteristics.
+
 ### Practical Takeaways
 This project demonstrates several applied machine learning principles relevant to real-world analytics workflows:
 - Proper cross-validation design for temporally structured data
