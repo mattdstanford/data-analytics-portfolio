@@ -4,6 +4,9 @@ This repository contains applied data analysis and modeling projects demonstrati
 
 ## Main Projects
 
+### NCAA XC Podium Analysis
+Developed and assessed supervised machine learning models to elucidate potential non-linear characteristics associated with NCAA cross country championship performance. Utilized SHAP-based model interpretation, supported with hypothesis testing using Mann-Whitney and Chi-Square tests.
+
 ### Measurement Bias in NYC Taxi Tip Data
 Developed and assessed linear regression models to elucidate relationships between trip characteristics and reported tip amounts, including categorical predictors. Confirmed a data collection bias by reconstructing total transaction amounts, demonstrating that apparent payment-type dependent effects reflect inconsistent tip tracking, not rider behavior.
 
