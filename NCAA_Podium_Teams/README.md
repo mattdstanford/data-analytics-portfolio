@@ -1,36 +1,86 @@
 # Executive Summary
-This project evaluates whether structural team characteristics demonstrate interpretable predictive characteristics for podium outcomes at NCAA Division I Cross Country Championships (2015–2025). Using a longitudinal dataset spanning 240 team observations and ~1,680 athletes (both sexes), I developed predictive models with Leave-One-Year-Out (LOYO) cross-validation to ensure realistic generalization to unseen competition years. The objective was not only to refine an explanatory model, but also to determine the extent of, and interpret, the impacts of model features on its predictions.
+This project evaluates whether structural team characteristics demonstrate interpretable predictive characteristics for podium outcomes at NCAA Division I Cross Country Championships (2015–2025). Using a longitudinal dataset spanning 240 team observations and ~1,680 athletes (both sexes), I developed predictive models with Leave-One-Year-Out (LOYO) cross-validation to ensure realistic generalization to unseen competition years. The objective was not only to develop a predictive model, but to identify and interpret structural features that consistently contribute predictive signal. Emphasis was placed on validation discipline, interpretable modeling, and transparent assessment of feature contributions.
 ## Key Results
 - Random Forest achieved mean AUC = 0.649, modestly outperforming logistic regression (AUC = 0.60)
 - Removing altitude-related features reduced AUC to 0.549, indicating meaningful predictive contribution
 - SHAP analysis identified altitude exposure and mean team age as consistent contributors
 - Athlete age and nationality distributions shifted significantly following COVID-era eligibility changes
 ## Dataset Overview
-Athlete-inclusion was determined via NCAA DI Cross Country competition results, courtesy of TFRRS.org. Demographic characteristics were sourced from worldathletics.org, using their in-built athlete repository search. ChatGPT was utilized to improve data compilation efficiency, and a global ruleset was developed at compilation-onset to ensure consistent formatting and to retain the ability to visually assess data integrity throughout compilation. Ultimately, the top 12 teams across 10 years (2015-2019, 2021-2025; no competitive results from 2020 due to COVID) for both sexes were compiled and delineated via sex. Athlete characteristics included: name, date of birth (if only a year was provided, a date of July 1st, XXXX was assumed), nationality (as listed on worldathletics.org), school class and associated school name at time of competition (school classes [FR, SO, JR, SR], taken from TFRRS.org results).
-## Feature Engineering and Variable Design
-All schools in the data set were compiled and assigned an altitude (metres), based on general internet search of their respective campus' altitudes. Athletes affiliated with those schools in a respective year's data were then assigned that school's altitude. School class was coded as an integer to allow for feature engineering (FR = 1, SO = 2, JR = 3, SR = 4). Based on a hypothesis that altitude exposure would be a meaningful feature in the predictive model, a value called "altitude exposure" was calculated, as a product of campus altitude and "years of exposure" (a conservative variable, designed as "school class - 1 year"), in the units of metre*year. "Years of exposure" was calculated as such, for 2 reasons. 1: Athlete transfer history is not easily sourced and thus athletes in the data set may have had exposure to multiple campuses' altitudes. 2: NCAA XC championships happen in the Fall, historically, which is generally the first academic semester for a new student, thus, they would have had only a handful of months at their new campus' altitude. Nationalities were placed into 4 coarse bins: USA, Europe, East Africa, and Other (any country not directly assigned to one of the three aforementioned bins).
+Athlete inclusion was determined using official NCAA Division I Cross Country Championship results from TFRRS.org. Athlete demographic characteristics were obtained from World Athletics (worldathletics.org), which provides publicly accessible athlete profiles. To ensure consistency and reproducibility, a structured data compilation workflow was developed, including standardized formatting rules and validation checks throughout the compilation process. 
 
-Following completion of an athlete-level data set, a team-aggregated data set was constructed, using Year, Sex, Campus, and Team Placing as unique identifiers. Team proportions of the aforementioned nationality bins, team proportions of school classes, mean athlete-age, athlete-age SD, and altitude exposure characteristics (mean, max, sd) were generated as aggregations and assigned to each team-entry, in addition to team placing, campus altitude, and year.
+Ultimately, the top 12 teams across 10 years (2015-2019, 2021-2025; no competitive results from 2020 due to COVID) for both sexes were compiled and delineated via sex. Athlete characteristics included: name, date of birth (if only a year was provided, a date of July 1st, XXXX was assumed), nationality (as listed on World Athletics), academic class and associated school name at time of competition (academic classes [FR, SO, JR, SR], taken from TFRRS.org results).
+## Feature Engineering and Variable Design
+Campus altitude (meters) was assigned to each school using publicly available geographic elevation data. Each athlete was assigned their school's campus altitude for the corresponding competition year. 
+
+Academic class was encoded numerically: 
+- FR = 1
+- SO = 2
+- JR = 3
+- SR = 4 
+
+To capture cumulative environmental exposure, an engineered variable called altitude exposure was calculated:
+altitude_exposure = campus_altitude x years_of_exposure
+
+Where:
+years_of_exposure = academic_class - 1 
+
+"years_of_exposure" was calculated as such, for 2 reasons:
+1. Athlete transfer history is not consistently available, so cumulative exposure cannot be precisely reconstructed.
+2. NCAA Cross Country Championships occur early in the academic year, meaning first-year athletes have limited exposure to their institution's altitude at the time of competition.
+  
+Nationality was grouped into 4 coarse bins: 
+- USA
+- Europe
+- East Africa
+- Other (any country not directly assigned to one of the three aforementioned bins).
+
+These bins were used to assess structural representation patterns and their potential association with team-level outcomes.
+
+Following completion of an athlete-level data set, a team-aggregated data set was constructed, using Year, Sex, Campus, and Team Placing as unique identifiers. 
+
+Team-level structural variables include:
+- Mean athlete age
+- Athlete age standard deviation
+- Proportion of athletes in each academic class
+- Proportion of athletes in each nationality bin
+- Campus altitude
+- Altitude exposure summary statistics (mean, max, standard deviation)
 
 ## Modeling Strategy
-The binary outcome of interest was whether or not a team made it on the podium (top 4 teams at NCAA XC), so all team data were assigned a binary variable of podium/non-podium, based on this criteria. An initial assessment via logistic regression was performed, using LOYO. To explore potential non-linear interactions between variables, random forest models were developed, also using LOYO for cross validation. Model-performance was assessed using ROC-AUC score. Ultimately, following interpretation of SHAP values from an initial RF model (explained below), 2 additional RF models were developed. The 3 models were: all features included, altitude exposure variables removed (but campus altitude retained), and all altitude variables removed. 
+The binary outcome of interest was whether or not a team finished on the podium (top 4 teams at NCAA XC). Therefore, each team observation was assigned a binary target variable:
+- podium = 1 if placing <= 4
+- podium = 0 otherwise
 
-Global mean SHAP value plots and SHAP dependence plots for the strongest predictors in the all features model were generated to further assess potential non-linear effects.
+
+Two model classes were evaluated: logistic regression (baseline linear model) and Random Forest (nonlinear model)
+
+All models were evaluated using Leave-One-Year-Out (LOYO) cross-validation, where models were trained on nine championship years and evaluated on the held-out year. Model performance was assessed using ROC-AUC score. To quantify the contribution of altitude-related features, three Random Forest variants were evaluated:
+- Full model (all features included)
+- Altitude exposure variables removed (campus altitude retained)
+- All altitude-related variables removed
+
+This approach allows for direct measurement of the predictive contribution of altitutde-related features.
+
+SHAP values were computed for the full Random Forest model to interpret feature contributions and assess potential nonlinear relationships between structural variables and model predictions.
 
 ## Model Performance
 ![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/model_aucs.png)
 
-A random forest model including all altitude variables performed modestly better than a logistic regression model including all variables (aucs: 0.6 vs. 0.65). The all-feature random forest model performed meaningfully better than a random forest with altitude values ommitted (aucs: 0.55 vs. 0.65), suggesting altitude to be a meaningful characteristic of teams who reach the podium at NCAA DI XC championships
+A random forest model's improved performance relative to a logistic regression model including all variables (aucs: 0.6 vs. 0.65) suggests the presenece of non-linear feature interactions. The all-feature random forest model performed meaningfully better than a random forest with altitude values ommitted (aucs: 0.55 vs. 0.65), suggesting altitude to carry meaningful predictive signal. While overall predictive performance remains modest, the consistent performance drop following ablation supports the presence of some interpretable structural signal.
 
 ## Model Interpretation
 ![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/shap_summary.png)
 
-A beeswarm plot of all SHAP values for all model features, with individual dots colored based on the magnitude of the feature's value for that specific data point. SHAP values describe, generally, the value that the inclusion of a specific feature has on the model's prediction of a team making it on the podium. A positive SHAP value indicates that, for that specific team data point, the inclusion of that feature (and that feature's value for that specific data point) pushed that data point's podium prediction closer to 1. The inverse is true to a negative SHAP value. Altitude-based features dominate model predictiveness. However, mean absolute SHAP values for all features were small to very small (ranging from 0.001-0.05). This observation is reflected in the model's AUC score, and is a product of at least 2 key factors: this data set is small (240 data points) and there are potentially numerous additional features which could not be included due to lack of access (e.g. athlete-level fitness, training programs at respective schools) or were not sourced and compiled due to time-requirements and/or availability of data (past-competition histories).
+SHAP (SHapley Additive exPlanations) values were used to interpret feature contributions in the full Random Forest model. Each point in the summary plot represents a single team observation. The horizontal position indicates the feature’s contribution to the model prediction, while color reflects the magnitude of the feature value. Positive SHAP values indicate features that increase the model’s predicted probability of podium placement, while negative values indicate features that decrease predicted probability. Altitude-related variables consistently ranked among the most influential features, along with mean team age and nationality representation variables. However, individual SHAP magnitudes were generally small, reflecting the modest predictive performance of the model. This is expected given:
+- Limited dataset size (240 team observations)
+- Absence of potentially relevant variables, such as training program characteristics, athlete performance history, recruitment metrics/strategy
+
+These results suggest that structural features carry interpretable signal, but do not fully explain podium outcomes. Therefore, model predictions reflect only probabilistic tendencies, rather than deterministic factors.
 
 ## Altitude Comparison
 ![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/podium_altitudes.png)
 
-Altitudes across podium and non-podium teams were compared. Visually, there is a meaningful difference in the range of the third quartile between podium and non-podium teams, with podium teams generally coming from campus as higher altitudes. Once again, this may partly be an artifact associated with size of the data set, but is worth noting.
+Campus altitude distributions were compared between podium and non-podium teams. Podium teams were more frequently associated with higher campus altitudes, with a visibly higher upper-quartile range compared to non-podium teams. This descriptive pattern is consistent with the predictive modeling results, where removal of altitude-related variables reduced model performance. While altitude alone does not determine outcomes, the consistency between descriptive comparisons and model ablation results supports the presence of interpretable structural signal associated with institutional altitude. This relationship likely reflects broader structural and institutional factors rather than a direct causal effect of altitude itself, but further exploration is warranted.
 
 ## Structural Distribution Shifts
 ![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/athlete_ages_per_era.png)
@@ -40,7 +90,11 @@ These data were tangentially aggregated (per athlete per era) to answer a second
 - Pre-COVID (2015–2019) Median age = 21.4
 - Post-COVID (2021–2025) Median age = 22.3
 
-A Mann-Whitney test showed a meaningful shift in age distribution from pre-post (p<.001, effect size "r" = 0.23), with athletes in the post-COVID era ~1 year older on average, based on top 12 team rosters. Linear regression was performed to assess inter-year shifts in the post-COVID era, which returned a standardized beta coefficient of .013 for 'Year', indicating no meaningful shift upwards or downwards in age across 2021-2025. This suggests a structural shift of some kind, where athletes have tended to be older on post-COVID rosters compared to pre-COVID. It is certainly plausible that this shift is explained mostly by delayed eligiblity due to COVID disruptions, although a lack of downward shift in age across post COVID years (back to pre-COVID norms) indicates additional factors may be involved.
+A Mann–Whitney U test confirmed a significant shift in age distributions:
+- p < 0.001
+- Effect size (r) = 0.23
+
+This indicates that athletes on top-12 team rosters were approximately one year older on average in the post-COVID era. To evaluate whether this represented a temporary disruption or a persistent shift, linear regression was performed across post-COVID years (2021–2025). The standardized regression coefficient for year was small (β = 0.013), indicating no meaningful trend toward younger or older rosters during this period. These results suggest a structural shift in roster age composition following COVID-era eligibility disruptions, rather than a temporary deviation returning to prior norms. While eligibility extensions likely contributed substantially, the persistence of elevated age distributions suggests additional structural or institutional factors may also play a role.
 
 ## Limitations
 - Dataset limited to top 12 teams per year
