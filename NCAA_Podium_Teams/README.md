@@ -64,12 +64,12 @@ This approach allows for direct measurement of the predictive contribution of al
 SHAP values were computed for the full Random Forest model to interpret feature contributions and assess potential nonlinear relationships between structural variables and model predictions.
 
 ## Model Performance
-![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/model_aucs.png)
+![RF_Models_AUC_Scores](figures/model_aucs.png)
 
 A random forest model's improved performance relative to a logistic regression model including all variables (aucs: 0.6 vs. 0.65) suggests the presenece of non-linear feature interactions. The all-feature random forest model performed meaningfully better than a random forest with altitude values ommitted (aucs: 0.55 vs. 0.65), suggesting altitude to carry meaningful predictive signal. While overall predictive performance remains modest, the consistent performance drop following ablation supports the presence of some interpretable structural signal.
 
 ## Model Interpretation
-![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/shap_summary.png)
+![RF_Models_AUC_Scores](figures/shap_summary.png)
 
 SHAP (SHapley Additive exPlanations) values were used to interpret feature contributions in the full Random Forest model. Each point in the summary plot represents a single team observation. The horizontal position indicates the feature’s contribution to the model prediction, while color reflects the magnitude of the feature value. Positive SHAP values indicate features that increase the model’s predicted probability of podium placement, while negative values indicate features that decrease predicted probability. Altitude-related variables consistently ranked among the most influential features, along with mean team age and nationality representation variables. However, individual SHAP magnitudes were generally small, reflecting the modest predictive performance of the model. This is expected given:
 - Limited dataset size (240 team observations)
@@ -78,12 +78,12 @@ SHAP (SHapley Additive exPlanations) values were used to interpret feature contr
 These results suggest that structural features carry interpretable signal, but do not fully explain podium outcomes. Therefore, model predictions reflect only probabilistic tendencies, rather than deterministic factors.
 
 ## Altitude Comparison
-![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/podium_altitudes.png)
+![RF_Models_AUC_Scores](figures/podium_altitudes.png)
 
 Campus altitude distributions were compared between podium and non-podium teams. Podium teams were more frequently associated with higher campus altitudes, with a visibly higher upper-quartile range compared to non-podium teams. This descriptive pattern is consistent with the predictive modeling results, where removal of altitude-related variables reduced model performance. While altitude alone does not determine outcomes, the consistency between descriptive comparisons and model ablation results supports the presence of interpretable structural signal associated with institutional altitude. This relationship likely reflects broader structural and institutional factors rather than a direct causal effect of altitude itself, but further exploration is warranted.
 
 ## Structural Distribution Shifts
-![RF_Models_AUC_Scores](/NCAA_Podium_Teams/figures/athlete_ages_per_era.png)
+![RF_Models_AUC_Scores](figures/athlete_ages_per_era.png)
 
 These data were tangentially aggregated (per athlete per era) to answer a secondary question: Has there been a shift in mean athlete age from pre-post COVID (and, if so, are there any intra-era trends in age post COVID)?
 
